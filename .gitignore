@@ -129,3 +129,6 @@ temp/
 
 # Docker 로컬 오버라이드 파일 (로컬 개발 시만 사용)
 docker-compose.override.yml
+
+*.yml
+*.yaml
