@@ -2,12 +2,17 @@ package com.backend.Gdg.global.web.controller;
 
 import com.backend.Gdg.global.apiPayload.ApiResponse;
 import com.backend.Gdg.global.apiPayload.code.status.SuccessStatus;
+import com.backend.Gdg.global.service.BookService.BookService;
+import com.backend.Gdg.global.web.dto.Book.BookRequestDTO;
+import com.backend.Gdg.global.web.dto.Book.BookResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,10 +29,22 @@ public class BookController {
         return ApiResponse.onSuccess(SuccessStatus.BOOK_OK, null);
     }
 
+    private final BookService bookService;
+
     @PostMapping("/register")
-    @Operation(summary = "책 등록 API", description = "새로운 책을 추가하는 API")
-    public ApiResponse<?> registerBook() {
-        return ApiResponse.onSuccess(SuccessStatus.BOOK_OK, null);
+    @Operation(summary = "책 등록 API", description = "새로운 책을 등록하는 API")
+    public ApiResponse<BookResponseDTO.BookRegisterResponseDTO> registerBook(@RequestBody BookRequestDTO.BookRegisterResquestDTO request,@RequestParam Long memberId) {
+        BookResponseDTO.BookRegisterResponseDTO response = bookService.registerBook(request, memberId);
+        return ApiResponse.onSuccess(SuccessStatus.BOOK_OK, response);
+    }
+
+    @PostMapping(path = "/{book_id}/book_cover", consumes = "multipart/form-data")
+    @Operation(summary = "책 표지 이미지 등록 API", description = "책의 표지 이미지를 등록하는 API입니다.")
+    public ApiResponse<?> uploadBookImage(
+            @ModelAttribute BookRequestDTO.BookImageRequestDTO request,
+            @PathVariable("book_id") Long bookId) {
+        bookService.uploadBookImage(bookId, request);
+        return ApiResponse.onSuccess(SuccessStatus.BOOK_OK, "책 표지 이미지 업로드 완료");
     }
 
     @GetMapping("/detail/{book_id}")
