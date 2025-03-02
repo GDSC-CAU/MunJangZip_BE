@@ -1,8 +1,11 @@
 package com.backend.Gdg.global.domain.entity;
 
+import com.backend.Gdg.global.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +15,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Book {
+public class Book extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +37,7 @@ public class Book {
     private String author;
 
     @Column(nullable = false)
-    private String registerAt;
+    private LocalDate registerAt;
 
     @Column(length = 255)
     private String ISBN;
