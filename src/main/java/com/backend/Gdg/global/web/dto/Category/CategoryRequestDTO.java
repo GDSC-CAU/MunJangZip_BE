@@ -1,0 +1,13 @@
+package com.backend.Gdg.global.web.dto.Category;
+
+import lombok.*;
+
+    @Getter
+    @Setter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public class CategoryRequestDTO {
+        private String categoryName;
+    }
+

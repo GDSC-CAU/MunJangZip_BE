@@ -17,7 +17,8 @@ public enum SuccessStatus implements BaseCode {
     MEMBER_OK(HttpStatus.OK, "MEMBER_1000", "성공입니다."),
     BARCODE_OK(HttpStatus.OK, "BARCODE_1000", "성공입니다"),
     BOOK_OK(HttpStatus.OK, "BOOK_1000", "성공입니다"),
-    PARAGRAPH_OK(HttpStatus.OK, "PARAGRAPH_1000", "성공입니다");
+    PARAGRAPH_OK(HttpStatus.OK, "PARAGRAPH_1000", "성공입니다"),
+    CATEGORY_OK(HttpStatus.OK,"CATEGORY_1000", "성공입니다");
 
     private final HttpStatus httpStatus;
     private final String code;
