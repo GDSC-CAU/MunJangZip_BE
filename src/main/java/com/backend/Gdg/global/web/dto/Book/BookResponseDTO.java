@@ -12,6 +12,8 @@ public class BookResponseDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class BookRegisterResponseDTO {
+        private Long memberId;
+        private Long bookId;
         private String title;
         private String author;
         private String ISBN;

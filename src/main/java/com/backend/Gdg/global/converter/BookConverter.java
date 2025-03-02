@@ -32,6 +32,8 @@ public class BookConverter {
     // BookResposneDTO를 반환
     public static BookResponseDTO.BookRegisterResponseDTO toBookRegisterResponseDTO(Book book) {
         return BookResponseDTO.BookRegisterResponseDTO.builder()
+                .bookId(book.getBookId())
+                .memberId(book.getMember().getMemberId())
                 .title(book.getTitle())
                 .author(book.getAuthor())
                 .ISBN(book.getISBN())
