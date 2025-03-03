@@ -1,13 +1,13 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/gdg
-    username: ${LOCAL_DB_NAME}
-    password: ${LOCAL_DB_PW}
+#    url: jdbc:mysql://localhost:3306/gdg
+#    username: ${LOCAL_DB_NAME}
+#    password: ${LOCAL_DB_PW}
     # 배포용
-#    url: jdbc:mysql://gdgdb.cpoeeaowebbq.ap-northeast-2.rds.amazonaws.com:3306/gdg_db
-#    username: root
-#    password: sokcho007!
+    url: jdbc:mysql://gdgdb.cpoeeaowebbq.ap-northeast-2.rds.amazonaws.com:3306/gdg_db
+    username: root
+    password: sokcho007!
   jpa:
     properties:
       hibernate:
