@@ -10,6 +10,7 @@ public class GdgApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(GdgApplication.class, args);
+		System.out.println("[Initiate GDG Project]");
 	}
 
 }
