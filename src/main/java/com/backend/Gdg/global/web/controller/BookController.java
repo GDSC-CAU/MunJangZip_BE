@@ -2,6 +2,8 @@ package com.backend.Gdg.global.web.controller;
 
 import com.backend.Gdg.global.apiPayload.ApiResponse;
 import com.backend.Gdg.global.apiPayload.code.status.SuccessStatus;
+import com.backend.Gdg.global.domain.entity.Member;
+import com.backend.Gdg.global.security.handler.annotation.AuthUser;
 import com.backend.Gdg.global.service.BookService.BookService;
 import com.backend.Gdg.global.web.dto.Book.BookRequestDTO;
 import com.backend.Gdg.global.web.dto.Book.BookResponseDTO;
@@ -33,8 +35,8 @@ public class BookController {
 
     @PostMapping("/register")
     @Operation(summary = "책 등록 API", description = "새로운 책을 등록하는 API")
-    public ApiResponse<BookResponseDTO.BookRegisterResponseDTO> registerBook(@RequestBody BookRequestDTO.BookRegisterResquestDTO request,@RequestParam Long memberId) {
-        BookResponseDTO.BookRegisterResponseDTO response = bookService.registerBook(request, memberId);
+    public ApiResponse<BookResponseDTO.BookRegisterResponseDTO> registerBook(@RequestBody BookRequestDTO.BookRegisterResquestDTO request,@Parameter(hidden = true) @AuthUser Member member) {
+        BookResponseDTO.BookRegisterResponseDTO response = bookService.registerBook(request, member.getMemberId());
         return ApiResponse.onSuccess(SuccessStatus.BOOK_OK, response);
     }
 

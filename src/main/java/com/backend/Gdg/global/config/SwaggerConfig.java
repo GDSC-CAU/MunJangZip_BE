@@ -23,7 +23,7 @@ public class SwaggerConfig {
         SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwtSchemeName);
         Components components = new Components()
                 .addSecuritySchemes("JWT TOKEN", new SecurityScheme()
-                        .name("Authorization")
+                        .name(jwtSchemeName)
                         .type(SecurityScheme.Type.HTTP) // HTTP 방식
                         .in(SecurityScheme.In.HEADER)
                         .scheme("bearer")
