@@ -16,7 +16,7 @@ public class BookImage {
     @Column(name = "image_id", nullable = false)
     private Long imageId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
