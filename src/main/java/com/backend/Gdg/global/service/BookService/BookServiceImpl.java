@@ -2,10 +2,7 @@ package com.backend.Gdg.global.service.BookService;
 
 import com.backend.Gdg.global.aws.s3.AmazonS3Manager;
 import com.backend.Gdg.global.converter.BookConverter;
-import com.backend.Gdg.global.domain.entity.Book;
-import com.backend.Gdg.global.domain.entity.BookImage;
-import com.backend.Gdg.global.domain.entity.Member;
-import com.backend.Gdg.global.domain.entity.Uuid;
+import com.backend.Gdg.global.domain.entity.*;
 import com.backend.Gdg.global.repository.*;
 import com.backend.Gdg.global.web.dto.Book.BookRequestDTO;
 import com.backend.Gdg.global.web.dto.Book.BookResponseDTO;
@@ -59,5 +56,17 @@ public class BookServiceImpl implements BookService {
                 .build();
 
         bookImageRepository.save(bookImage);
+    }
+
+    @Override
+    public BookResponseDTO.BookByCategoryResponseDTO getBooksByCategory(Long categoryId, Long memberId) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 카테고리를 찾을 수 없습니다."));
+
+        if (!category.getMember().getMemberId().equals(memberId)) {
+            throw new IllegalArgumentException("해당 카테고리에 접근할 수 없습니다.");
+        }
+
+        return BookConverter.toBookByCategoryResponseDTO(category);
     }
 }

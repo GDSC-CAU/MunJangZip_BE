@@ -1,6 +1,7 @@
 package com.backend.Gdg.global.converter;
 
 import com.backend.Gdg.global.domain.entity.Book;
+import com.backend.Gdg.global.domain.entity.BookImage;
 import com.backend.Gdg.global.domain.entity.Category;
 import com.backend.Gdg.global.domain.entity.Member;
 import com.backend.Gdg.global.repository.CategoryRepository;
@@ -8,6 +9,9 @@ import com.backend.Gdg.global.web.dto.Book.BookRequestDTO;
 import com.backend.Gdg.global.web.dto.Book.BookResponseDTO;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class BookConverter {
 
@@ -41,4 +45,32 @@ public class BookConverter {
                 .category(book.getCategory().getCategoryName())
                 .build();
     }
+
+    // BookCategoryListDTO 변환
+    public static BookResponseDTO.BookCategoryListDTO toBookCategoryListDTO(Book book) {
+        String bookImage = book.getBookImage() != null ? book.getBookImage().getImageUrl() : null;
+
+        return BookResponseDTO.BookCategoryListDTO.builder()
+                .bookId(book.getBookId())
+                .bookImage(bookImage)
+                .title(book.getTitle())
+                .author(book.getAuthor())
+                .build();
+    }
+
+    // BookByCategoryResponseDTO 변환
+    public static BookResponseDTO.BookByCategoryResponseDTO toBookByCategoryResponseDTO(Category category) {
+        List<BookResponseDTO.BookCategoryListDTO> books = category.getBooks().stream()
+                .map(BookConverter::toBookCategoryListDTO)
+                .collect(Collectors.toList());
+
+        return BookResponseDTO.BookByCategoryResponseDTO.builder()
+                .categoryId(category.getCategoryId())
+                .categoryName(category.getCategoryName())
+                .memberId(category.getMember().getMemberId())
+                .books(books)
+                .build();
+    }
+
+
 }

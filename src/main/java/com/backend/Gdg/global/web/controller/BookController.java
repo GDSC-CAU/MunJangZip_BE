@@ -49,6 +49,14 @@ public class BookController {
         return ApiResponse.onSuccess(SuccessStatus.BOOK_OK, "책 표지 이미지 업로드 완료");
     }
 
+    @GetMapping("/category/{categoryId}")
+    @Operation(summary = "카테고리별 책 목록 조회 API", description = "해당 카테고리에 속한 책 목록을 조회하는 API")
+    public ApiResponse<BookResponseDTO.BookByCategoryResponseDTO> getBooksByCategory(
+            @PathVariable Long categoryId, @Parameter(hidden = true) @AuthUser Member member) {
+        BookResponseDTO.BookByCategoryResponseDTO response = bookService.getBooksByCategory(categoryId, member.getMemberId());
+        return ApiResponse.onSuccess(SuccessStatus.BOOK_OK, response);
+    }
+
     @GetMapping("/detail/{book_id}")
     @Operation(summary = "책 상세 조회 API", description = "책의 상세 정보를 조회하는 API")
     public ApiResponse<?> getBookDetail(@PathVariable Long book_id) {
