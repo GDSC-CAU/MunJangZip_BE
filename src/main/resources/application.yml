@@ -6,8 +6,8 @@ spring:
 #    password: ${LOCAL_DB_PW}
     # 배포용
     url: jdbc:mysql://gdgdb.cpoeeaowebbq.ap-northeast-2.rds.amazonaws.com:3306/gdg_db
-    username: root
-    password: sokcho007!
+    username: ${RDS_NAME}
+    password: ${RDS_PW}
   jpa:
     properties:
       hibernate:
@@ -35,7 +35,7 @@ cloud:
 #        review: review
         book: book
     region:
-      static: ap-northeast-2
+      static: ${AWS_REGION}
     stack:
       auto: false
     credentials:
