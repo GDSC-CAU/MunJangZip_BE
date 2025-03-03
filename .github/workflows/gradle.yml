@@ -63,18 +63,21 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
-            # 1. 기존 Docker 컨테이너 중지 및 삭제
+            echo "✅ Stopping and removing old container..."
             sudo docker stop gdg-container || true
             sudo docker rm gdg-container || true
 
-            # 2. Docker Hub에서 최신 이미지 pull
+            echo "✅ Pulling latest Docker image..."
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/gdg-project:latest
 
-            # 3. 새로운 컨테이너 실행 (환경 변수 추가)
-            sudo docker run -d \
-              --name gdg-container \
-              -p 8080:8080 \
+            echo "✅ Running new Docker container..."
+            sudo docker run -d --name gdg-container -p 8080:8080 \
+              -e AWS_ACCESS_KEY_ID="${{ secrets.AWS_ACCESS_KEY_ID }}" \
+              -e AWS_SECRET_ACCESS_KEY="${{ secrets.AWS_SECRET_ACCESS_KEY }}" \
+              -e AWS_REGION="${{ secrets.AWS_REGION }}" \
               -e JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}" \
               -e JWT_ACCESS_TOKEN_TIME="${{ secrets.JWT_ACCESS_TOKEN_TIME }}" \
               -e JWT_REFRESH_TOKEN_TIME="${{ secrets.JWT_REFRESH_TOKEN_TIME }}" \
+              -e RDS_USERNAME="${{ secrets.RDS_USERNAME }}" \
+              -e RDS_PASSWORD="${{ secrets.RDS_PASSWORD }}" \
               ${{ secrets.DOCKER_USERNAME }}/gdg-project:latest
