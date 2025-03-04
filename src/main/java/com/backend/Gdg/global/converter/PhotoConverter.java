@@ -7,7 +7,6 @@ import com.backend.Gdg.global.web.dto.PhotoEx;
 public class PhotoConverter {
     public static Photo toPhoto(PhotoEx.PhotoDTO photoDTO, Member member) {
         return Photo.builder()
-
                 .build();
     }
 }
