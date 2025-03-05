@@ -15,16 +15,10 @@ public enum SuccessStatus implements BaseCode {
     EXAMPLE_OK(HttpStatus.OK, "EXAMPLE_1000", "성공입니다."),
     // 유저 관련 응답
     MEMBER_OK(HttpStatus.OK, "MEMBER_1000", "성공입니다."),
-    // 품앗이 관련 응답
-    TRADE_OK(HttpStatus.OK, "TRADE_1000", "성공입니다."),
-    // 식재료 관련 응답
-    INGREDIENT_OK(HttpStatus.OK, "INGREDIENT_1000", "성공입니다."),
-    // 냉장고 관련 응답
-    FRIDGE_OK(HttpStatus.OK, "FRIDGE_1000", "성공입니다."),
-    // 레시피 관련 응답
-    RECIPE_OK(HttpStatus.OK, "RECIPE_1000", "성공입니다."),
-    // 채팅 관련 응답
-    CHAT_OK(HttpStatus.OK, "CHAT_1000", "성공입니다.");
+    BARCODE_OK(HttpStatus.OK, "BARCODE_1000", "성공입니다"),
+    BOOK_OK(HttpStatus.OK, "BOOK_1000", "성공입니다"),
+    PARAGRAPH_OK(HttpStatus.OK, "PARAGRAPH_1000", "성공입니다"),
+    CATEGORY_OK(HttpStatus.OK,"CATEGORY_1000", "성공입니다");
 
     private final HttpStatus httpStatus;
     private final String code;

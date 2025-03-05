@@ -1,13 +1,13 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/gdg
-    username: ${LOCAL_DB_NAME}
-    password: ${LOCAL_DB_PW}
+#    url: jdbc:mysql://localhost:3306/gdg
+#    username: ${LOCAL_DB_NAME}
+#    password: ${LOCAL_DB_PW}
     # 배포용
-#    url: jdbc:mysql://gdgdb.cpoeeaowebbq.ap-northeast-2.rds.amazonaws.com:3306/gdg_db
-#    username: root
-#    password: sokcho007!
+    url: jdbc:mysql://gdgdb.cpoeeaowebbq.ap-northeast-2.rds.amazonaws.com:3306/gdg_db
+    username: ${RDS_NAME}
+    password: ${RDS_PW}
   jpa:
     properties:
       hibernate:
@@ -35,15 +35,14 @@ cloud:
 #        review: review
         book: book
     region:
-      static: ap-northeast-2
+      static: ${AWS_REGION}
     stack:
       auto: false
     credentials:
       accessKey: ${AWS_ACCESS_KEY_ID}
       secretKey: ${AWS_SECRET_ACCESS_KEY}
 
-#jwt:
-#  secret: ${JWT_SECRET_KEY}
-#  access-token-validity: ${JWT_ACCESS_TOKEN_TIME}
-#  refresh-token-validity: ${JWT_REFRESH_TOKEN_TIME}
-#lt_batch_fetch_size: 1000
+jwt:
+  secret: ${JWT_SECRET_KEY}
+  access-token-validity: ${JWT_ACCESS_TOKEN_TIME}
+  refresh-token-validity: ${JWT_REFRESH_TOKEN_TIME}
