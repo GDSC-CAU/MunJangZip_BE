@@ -80,4 +80,9 @@ jobs:
               -e JWT_REFRESH_TOKEN_TIME="${{ secrets.JWT_REFRESH_TOKEN_TIME }}" \
               -e RDS_NAME="${{ secrets.RDS_NAME }}" \
               -e RDS_PW="${{ secrets.RDS_PW }}" \
+              -e KEY_STORE_PASSWORD="${{ secrets.KEY_STORE_PASSWORD }}" \
+              -e NAVER_API_ID="${{ secrets.NAVER_API_ID }}" \
+              -e NAVER_API_SECRET="${{ secrets.NAVER_API_SECRET }}" \
+              -e LOCAL_DB_NAME="${{ secrets.LOCAL_DB_NAME }}" \
+              -e LOCAL_DB_PW="${{ secrets.LOCAL_DB_PW }}" \
               ${{ secrets.DOCKER_USERNAME }}/gdg-project:latest
