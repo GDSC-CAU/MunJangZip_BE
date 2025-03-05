@@ -1,7 +1,9 @@
 package com.backend.Gdg.global.web.controller;
 
-import com.backend.Gdg.global.apiPayload.code.status.SuccessStatus;
 import com.backend.Gdg.global.apiPayload.ApiResponse;
+import com.backend.Gdg.global.apiPayload.code.status.SuccessStatus;
+import com.backend.Gdg.global.service.IsbnService;
+import com.backend.Gdg.global.web.dto.IsbnResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +20,12 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "바코드 API", description = "바코드 관련 API입니다.")
 public class BarcodeController {
 
+    private final IsbnService isbnService;
+
     @GetMapping("/book/{ISBN}")
     @Operation(summary = "책 정보 조회 API", description = "바코드를 이용하여 책 정보를 조회하는 API")
-    public ApiResponse<?> getBookByBarcode(@PathVariable String ISBN) {
-        return ApiResponse.onSuccess(SuccessStatus.BARCODE_OK, null);
+    public ApiResponse<IsbnResponseDto> getBookByBarcode(@PathVariable String ISBN) {
+        IsbnResponseDto isbnResponse = isbnService.fetchIsbnInfo(ISBN);
+        return ApiResponse.onSuccess(SuccessStatus.BARCODE_OK, isbnResponse);
     }
 }
