@@ -26,24 +26,24 @@ public class IsbnService {
     private final RestTemplate restTemplate;
     private final IsbnConverter isbnConverter;
 
-    // application.properties에 등록한 클라이언트 아이디와 시크릿
     @Value("${NAVER_API_ID}")
     private String clientId;
 
     @Value("${NAVER_API_SECRET}")
     private String clientSecret;
 
-    // 네이버 책 상세 검색 API (XML 형식)
-    private final String EXTERNAL_ISBN_API_URL = "https://openapi.naver.com/v1/search/book_adv.xml?d_isbn={isbn}&display=10&start=1";
+    // 네이버 책 검색 API 엔드포인트 (XML 형식)
+    // query 파라미터에 ISBN 코드를 전달하여 검색합니다.
+    private final String EXTERNAL_ISBN_API_URL = "https://openapi.naver.com/v1/search/book.xml?query={isbn}&display=10&start=1";
 
     public IsbnResponseDto fetchIsbnInfo(String isbn) {
-        // HTTP 헤더 설정: 클라이언트 아이디와 시크릿 추가
+        // HTTP 요청 헤더 설정: 클라이언트 아이디와 클라이언트 시크릿 포함
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Naver-Client-Id", clientId);
         headers.add("X-Naver-Client-Secret", clientSecret);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        // GET 요청을 통해 XML 응답 문자열 획득
+        // ISBN 코드를 query 파라미터로 사용하여 GET 요청 수행
         ResponseEntity<String> responseEntity = restTemplate.exchange(
                 EXTERNAL_ISBN_API_URL,
                 HttpMethod.GET,
@@ -72,14 +72,12 @@ public class IsbnService {
             String image = getTagValue("image", itemElement);
             String isbnValue = getTagValue("isbn", itemElement);
 
-            // 외부 API 응답 모델에 값 설정
             ExternalIsbnApiResponse externalResponse = new ExternalIsbnApiResponse();
             externalResponse.setTitle(title);
             externalResponse.setAuthor(author);
             externalResponse.setCoverImageUrl(image);
             externalResponse.setIsbn(isbnValue);
 
-            // 컨버터를 통해 내부 DTO로 변환 후 반환
             return isbnConverter.toDto(externalResponse);
         } catch (Exception e) {
             throw new RuntimeException("XML 파싱 또는 API 응답 처리 중 오류 발생", e);
