@@ -5,6 +5,7 @@ import com.backend.Gdg.global.apiPayload.code.status.SuccessStatus;
 import com.backend.Gdg.global.domain.entity.Member;
 import com.backend.Gdg.global.security.handler.annotation.AuthUser;
 import com.backend.Gdg.global.service.BookService.BookService;
+import com.backend.Gdg.global.web.dto.Book.BookDetailResponseDTO;
 import com.backend.Gdg.global.web.dto.Book.BookRequestDTO;
 import com.backend.Gdg.global.web.dto.Book.BookResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -59,7 +60,10 @@ public class BookController {
 
     @GetMapping("/detail/{book_id}")
     @Operation(summary = "책 상세 조회 API", description = "책의 상세 정보를 조회하는 API")
-    public ApiResponse<?> getBookDetail(@PathVariable Long book_id) {
-        return ApiResponse.onSuccess(SuccessStatus.BOOK_OK, null);
+    public ApiResponse<BookDetailResponseDTO> getBookDetail(@PathVariable("book_id") Long bookId,
+                                                            @Parameter(hidden = true) @AuthUser Member member) {
+        BookDetailResponseDTO response = bookService.getBookDetail(bookId);
+        return ApiResponse.onSuccess(SuccessStatus.BOOK_OK, response);
     }
+
 }
