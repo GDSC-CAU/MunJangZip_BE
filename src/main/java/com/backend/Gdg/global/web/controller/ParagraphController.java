@@ -61,9 +61,19 @@ public class ParagraphController {
     }
 
 
+    // 필사 삭제 API – 오직 필사를 추가한 사용자만 삭제 가능
     @DeleteMapping("/delete/{paragraph_id}")
-    @Operation(summary = "필사 삭제 API", description = "사용자가 필사한 내용을 삭제하는 API")
-    public ApiResponse<?> deleteParagraph(@PathVariable Long paragraph_id) {
-        return ApiResponse.onSuccess(SuccessStatus.PARAGRAPH_OK, null);
+    @Operation(summary = "필사 삭제 API", description = "필사를 추가한 사용자만 해당 필사를 삭제할 수 있습니다.")
+    public ApiResponse<ParagraphResponseDTO> deleteParagraph(
+            @PathVariable("paragraph_id") Long paragraphId,
+            @Parameter(hidden = true) @AuthUser Member member) {
+        try {
+            ParagraphResponseDTO response = paragraphService.deleteParagraph(paragraphId, member.getMemberId());
+            return ApiResponse.onSuccess(SuccessStatus.BOOK_OK, response);
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.onFailure("401", e.getMessage(), null);
+        } catch (Exception e) {
+            return ApiResponse.onFailure("500", "서버 내부 오류가 발생했습니다.", null);
+        }
     }
 }

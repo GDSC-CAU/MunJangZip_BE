@@ -11,5 +11,5 @@ public interface ParagraphService {
     // 필사 수정 기능
     ParagraphResponseDTO updateParagraph(Long paragraphId, Long memberId, ParagraphUpdateRequestDTO request);
 
-
+    ParagraphResponseDTO deleteParagraph(Long paragraphId, Long memberId);
 }

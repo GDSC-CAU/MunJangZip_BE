@@ -104,4 +104,37 @@ public class ParagraphServiceImpl implements ParagraphService {
                 .paragraph(paragraphDetails)
                 .build();
     }
+
+    @Override
+    public ParagraphResponseDTO deleteParagraph(Long paragraphId, Long memberId) {
+        // 필사 존재 여부 및 삭제 권한 검증: 오직 필사를 추가한 사용자만 삭제 가능
+        Paragraph paragraph = paragraphRepository.findById(paragraphId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 필사가 존재하지 않습니다."));
+        if (!paragraph.getMember().getMemberId().equals(memberId)) {
+            throw new IllegalArgumentException("삭제 권한이 없습니다.");
+        }
+
+        // 삭제 전 해당 필사가 속한 책 정보를 가져옴
+        Book book = paragraph.getBook();
+
+        // 필사 삭제
+        paragraphRepository.delete(paragraph);
+
+        // 삭제 후 해당 책의 남은 필사 목록 조회 및 응답 매핑
+        List<ParagraphResponseDTO.ParagraphDetail> paragraphDetails = paragraphRepository
+                .findByBook_BookId(book.getBookId())
+                .stream()
+                .map(p -> ParagraphResponseDTO.ParagraphDetail.builder()
+                        .paragraph_id(p.getParagraphId())
+                        .content(p.getParagraph())
+                        .imageUrl(p.getImageUrl())
+                        .color(p.getUserColor())
+                        .create_at(p.getCreateAt())
+                        .build())
+                .collect(Collectors.toList());
+
+        return ParagraphResponseDTO.builder()
+                .paragraph(paragraphDetails)
+                .build();
+    }
 }
