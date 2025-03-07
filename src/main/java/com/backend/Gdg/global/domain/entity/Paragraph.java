@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-class Paragraph {
+public class Paragraph {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,5 +1,6 @@
 package com.backend.Gdg.global.service.BookService;
 
+import com.backend.Gdg.global.web.dto.Book.BookDetailResponseDTO;
 import com.backend.Gdg.global.web.dto.Book.BookRequestDTO;
 import com.backend.Gdg.global.web.dto.Book.BookResponseDTO;
 
@@ -13,6 +14,9 @@ public interface BookService {
 
     //카테고리별 책 조회 서비스
     BookResponseDTO.BookByCategoryResponseDTO getBooksByCategory(Long categoryId, Long memberId);
+
+    // 책 상세 조회 서비스 메서드
+    BookDetailResponseDTO getBookDetail(Long bookId);
 }
 
 
