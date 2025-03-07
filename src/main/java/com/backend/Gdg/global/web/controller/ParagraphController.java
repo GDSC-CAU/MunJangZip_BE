@@ -8,6 +8,7 @@ import com.backend.Gdg.global.security.handler.annotation.AuthUser;
 import com.backend.Gdg.global.service.ParagraphService.ParagraphService;
 import com.backend.Gdg.global.web.dto.Paragraph.ParagraphRequestDTO;
 import com.backend.Gdg.global.web.dto.Paragraph.ParagraphResponseDTO;
+import com.backend.Gdg.global.web.dto.Paragraph.ParagraphUpdateRequestDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -41,12 +42,24 @@ public class ParagraphController {
         }
     }
 
-
+    // 필사 수정
     @PatchMapping("/update/{paragraph_id}")
-    @Operation(summary = "필사 수정 API", description = "사용자가 필사한 내용을 수정하는 API")
-    public ApiResponse<?> updateParagraph(@PathVariable Long paragraph_id) {
-        return ApiResponse.onSuccess(SuccessStatus.PARAGRAPH_OK, null);
+    @Operation(summary = "필사 수정 API", description = "필사의 내용을 수정합니다. 수정은 필사를 등록한 사용자만 가능합니다.")
+    public ApiResponse<ParagraphResponseDTO> updateParagraph(
+            @PathVariable("paragraph_id") Long paragraphId,
+            @RequestBody ParagraphUpdateRequestDTO request,
+            @Parameter(hidden = true) @AuthUser Member member) {
+        try {
+            // 토큰에서 주입된 Member 객체를 통해 수정 권한을 확인함
+            ParagraphResponseDTO response = paragraphService.updateParagraph(paragraphId, member.getMemberId(), request);
+            return ApiResponse.onSuccess(SuccessStatus.BOOK_OK, response);
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.onFailure("401", "인증되지 않거나 수정 권한이 없는 사용자입니다.", null);
+        } catch (Exception e) {
+            return ApiResponse.onFailure("500", "서버 내부 오류가 발생했습니다.", null);
+        }
     }
+
 
     @DeleteMapping("/delete/{paragraph_id}")
     @Operation(summary = "필사 삭제 API", description = "사용자가 필사한 내용을 삭제하는 API")
