@@ -39,6 +39,7 @@ public class BookServiceImpl implements BookService {
                 .collect(Collectors.toList());
         return BookResponseDTO.MainBookListResponseDTO.builder()
                 .nickName(member.getNickName())
+                .libraryName(member.getLibraryName())
                 .categoryList(categoryList)
                 .build();
     }

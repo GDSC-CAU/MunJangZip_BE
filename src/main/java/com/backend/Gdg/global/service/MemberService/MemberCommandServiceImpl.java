@@ -49,6 +49,7 @@ public class MemberCommandServiceImpl implements MemberCommandService{
         // 회원 생성
         Member member = Member.builder()
                 .nickName(request.getNickname())
+                .libraryName(request.getLibraryName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .build();
