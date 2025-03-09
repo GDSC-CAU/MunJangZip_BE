@@ -29,4 +29,36 @@ public class CategoryServiceImpl implements CategoryService {
 
         return CategoryConverter.toCategoryResponseDTO(savedCategory);
     }
+
+
+
+    @Override
+    public CategoryResponseDTO updateCategory(Long memberId,Long categoryId, CategoryRequestDTO request) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
+
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 카테고리를 찾을 수 없습니다."));
+
+        if (request.getCategoryName() != null) {
+            category.setCategoryName(request.getCategoryName());
+        }
+
+        Category updatedCategory = categoryRepository.save(category);
+
+        return CategoryConverter.toCategoryResponseDTO(updatedCategory);
+    }
+
+
+    @Override
+    public void deleteCategory(Long memberId, Long categoryId) {
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
+
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 카테고리를 찾을 수 없습니다."));
+        categoryRepository.delete(category);
+    }
+
 }
