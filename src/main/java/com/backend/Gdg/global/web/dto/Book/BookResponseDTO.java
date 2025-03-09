@@ -7,6 +7,32 @@ import java.util.List;
 
 public class BookResponseDTO {
 
+
+    //메인 화면 조회 DTO
+    @Getter
+    @Setter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class MainBookResponseDTO {
+        private Long categoryId;
+        private String categoryName;
+        private String recentBookCovers;
+        private Long bookCount;
+        private Long memoCount;
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class MainBookListResponseDTO {
+        private String nickName;
+        private List<MainBookResponseDTO> categoryList;
+    }
+
+    //BookRegister
     @Getter
     @Setter
     @Builder
@@ -20,6 +46,7 @@ public class BookResponseDTO {
         private String ISBN;
         private LocalDate register_at;
         private String category;
+        private String coverImageUrl;
     }
 
     @Getter

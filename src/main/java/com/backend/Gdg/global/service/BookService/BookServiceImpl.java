@@ -11,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -27,12 +30,30 @@ public class BookServiceImpl implements BookService {
     private final MemberRepository memberRepository;
 
     @Override
-    public BookResponseDTO.BookRegisterResponseDTO registerBook(BookRequestDTO.BookRegisterResquestDTO request,Long memberId) {
+    public BookResponseDTO.MainBookListResponseDTO getMainBook(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 멤버가 존재하지 않습니다."));
+        List<Category> categories = categoryRepository.findByMember_MemberId(memberId);
+        List<BookResponseDTO.MainBookResponseDTO> categoryList = categories.stream()
+                .map(BookConverter::toMainBookResponseDTO)
+                .collect(Collectors.toList());
+        return BookResponseDTO.MainBookListResponseDTO.builder()
+                .nickName(member.getNickName())
+                .categoryList(categoryList)
+                .build();
+    }
+
+    @Override
+    public BookResponseDTO.BookRegisterResponseDTO registerBook(Long categoryId, BookRequestDTO.BookRegisterResquestDTO request,Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 멤버가 존재하지 않습니다."));
 
-        Book book = BookConverter.toBook(request, categoryRepository, member);
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 카테고리가 존재하지 않습니다."));
+
+        Book book = BookConverter.toBook(request, category, member);
         Book savedBook = bookRepository.save(book);
+
 
         return BookConverter.toBookRegisterResponseDTO(savedBook);
     }

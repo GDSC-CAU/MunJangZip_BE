@@ -26,29 +26,32 @@ import org.springframework.web.multipart.MultipartFile;
 @Tag(name = "책 API", description = "책 관련 API입니다.")
 public class BookController {
 
-    @GetMapping("")
-    @Operation(summary = "메인 화면 조회 API", description = "책 목록을 조회하는 API")
-    public ApiResponse<?> getMainBooks() {
-        return ApiResponse.onSuccess(SuccessStatus.BOOK_OK, null);
-    }
 
     private final BookService bookService;
 
-    @PostMapping("/register")
-    @Operation(summary = "책 등록 API", description = "새로운 책을 등록하는 API")
-    public ApiResponse<BookResponseDTO.BookRegisterResponseDTO> registerBook(@RequestBody BookRequestDTO.BookRegisterResquestDTO request,@Parameter(hidden = true) @AuthUser Member member) {
-        BookResponseDTO.BookRegisterResponseDTO response = bookService.registerBook(request, member.getMemberId());
+    @GetMapping("/main")
+    @Operation(summary = "메인 화면 조회 API", description = "사용자의 닉네임과 각 카테고리별 최신 책 표지, 책 수, 메모 수를 반환하는 API")
+    public ApiResponse<BookResponseDTO.MainBookListResponseDTO> getMainScreen(
+            @Parameter(hidden = true) @AuthUser Member member) {
+        BookResponseDTO.MainBookListResponseDTO response = bookService.getMainBook(member.getMemberId());
         return ApiResponse.onSuccess(SuccessStatus.BOOK_OK, response);
     }
 
-    @PostMapping(path = "/{book_id}/book_cover", consumes = "multipart/form-data")
-    @Operation(summary = "책 표지 이미지 등록 API", description = "책의 표지 이미지를 등록하는 API입니다.")
-    public ApiResponse<?> uploadBookImage(
-            @ModelAttribute BookRequestDTO.BookImageRequestDTO request,
-            @PathVariable("book_id") Long bookId) {
-        bookService.uploadBookImage(bookId, request);
-        return ApiResponse.onSuccess(SuccessStatus.BOOK_OK, "책 표지 이미지 업로드 완료");
+    @PostMapping("/register/{categoryId}")
+    @Operation(summary = "책 등록 API", description = "새로운 책을 등록하는 API")
+    public ApiResponse<BookResponseDTO.BookRegisterResponseDTO> registerBook(@PathVariable Long categoryId,@RequestBody BookRequestDTO.BookRegisterResquestDTO request,@Parameter(hidden = true) @AuthUser Member member) {
+        BookResponseDTO.BookRegisterResponseDTO response = bookService.registerBook(categoryId, request, member.getMemberId());
+        return ApiResponse.onSuccess(SuccessStatus.BOOK_OK, response);
     }
+
+//    @PostMapping(path = "/{book_id}/book_cover", consumes = "multipart/form-data")
+//    @Operation(summary = "책 표지 이미지 등록 API", description = "책의 표지 이미지를 등록하는 API입니다.")
+//    public ApiResponse<?> uploadBookImage(
+//            @ModelAttribute BookRequestDTO.BookImageRequestDTO request,
+//            @PathVariable("book_id") Long bookId) {
+//        bookService.uploadBookImage(bookId, request);
+//        return ApiResponse.onSuccess(SuccessStatus.BOOK_OK, "책 표지 이미지 업로드 완료");
+//    }
 
     @GetMapping("/category/{categoryId}")
     @Operation(summary = "카테고리별 책 목록 조회 API", description = "해당 카테고리에 속한 책 목록을 조회하는 API")

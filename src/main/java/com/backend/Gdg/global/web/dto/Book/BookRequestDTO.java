@@ -16,6 +16,7 @@ public class BookRequestDTO {
         private String author;
         private String ISBN;
         private String category;
+        private String coverImageUrl;
     }
 
     @Getter
