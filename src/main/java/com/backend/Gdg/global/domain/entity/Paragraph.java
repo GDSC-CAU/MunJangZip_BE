@@ -31,11 +31,13 @@ public class Paragraph {
     @Column(length = 150)
     private String paragraph;
 
+    @Column(length = 255)
+    private String imageUrl;
+
     private Boolean isLiked;
 
     @Column(nullable = false)
     private String createAt;
 
-    @Column(length = 10)
-    private String userColor;
+    private int userColor;
 }
