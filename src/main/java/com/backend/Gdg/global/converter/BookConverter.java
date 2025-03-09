@@ -9,25 +9,55 @@ import com.backend.Gdg.global.web.dto.Book.BookRequestDTO;
 import com.backend.Gdg.global.web.dto.Book.BookResponseDTO;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class BookConverter {
 
+    //Main화면에 모든 카테고리 조회
+    public static BookResponseDTO.MainBookResponseDTO toMainBookResponseDTO(Category category) {
+
+        String recentBookCover = null;
+        if (category.getBooks() != null && !category.getBooks().isEmpty()) {
+            Optional<Book> latestBook = category.getBooks().stream()
+                    .max(Comparator.comparing(Book::getRegisterAt));
+            if (latestBook.isPresent()) {
+                recentBookCover = latestBook.get().getCoverImageUrl();
+            }
+        }
+
+        long bookCount = (category.getBooks() != null) ? category.getBooks().size() : 0;
+
+        long memoCount = 0;
+        if (category.getBooks() != null) {
+            memoCount = category.getBooks().stream()
+                    .mapToLong(book -> (book.getParagraphs() != null ? book.getParagraphs().size() : 0))
+                    .sum();
+        }
+
+        return BookResponseDTO.MainBookResponseDTO.builder()
+                .categoryId(category.getCategoryId())
+                .categoryName(category.getCategoryName())
+                .recentBookCovers(recentBookCover)
+                .bookCount(bookCount)
+                .memoCount(memoCount)
+                .build();
+    }
+
+
     //BookRegisterResquestDTO를 바탕으로 Book엔티티 변환
     public static Book toBook(BookRequestDTO.BookRegisterResquestDTO request,
-                              CategoryRepository categoryRepository,
+                              Category category,
                               Member member) {
-
-        Category category = categoryRepository.findByCategoryName(request.getCategory())
-                .orElseThrow(() -> new IllegalArgumentException("해당 카테고리가 존재하지 않습니다."));
 
         return Book.builder()
                 .title(request.getTitle())
                 .author(request.getAuthor())
                 .ISBN(request.getISBN())
                 .member(member)
+                .CoverImageUrl(request.getCoverImageUrl())
                 .category(category)
                 .registerAt(LocalDate.now())
                 .build();
@@ -43,6 +73,7 @@ public class BookConverter {
                 .ISBN(book.getISBN())
                 .register_at(book.getRegisterAt())
                 .category(book.getCategory().getCategoryName())
+                .coverImageUrl(book.getCoverImageUrl())
                 .build();
     }
 
