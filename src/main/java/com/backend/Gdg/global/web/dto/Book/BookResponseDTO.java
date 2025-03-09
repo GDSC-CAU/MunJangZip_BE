@@ -29,6 +29,7 @@ public class BookResponseDTO {
     @NoArgsConstructor
     public static class MainBookListResponseDTO {
         private String nickName;
+        private String libraryName;
         private List<MainBookResponseDTO> categoryList;
     }
 

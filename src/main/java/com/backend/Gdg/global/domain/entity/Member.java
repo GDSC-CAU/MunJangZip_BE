@@ -22,6 +22,9 @@ public class Member {
     @Column(length = 255, nullable = false)
     private String nickName;
 
+    @Column(length = 255, nullable = false)
+    private String libraryName;
+
     @Enumerated(EnumType.STRING)
     private Gender gender;
 

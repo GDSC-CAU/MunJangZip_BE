@@ -18,6 +18,9 @@ public class AuthRequestDTO {
         @Size(max = 200, message = "닉네임은 200자 이내로 입력해주세요.")
         private String nickname;
 
+        @NotBlank(message = "도서관 이름은 필수입니다.")
+        private String libraryName;
+
         @NotBlank(message = "이메일은 필수입니다.")
         @Email(message = "올바른 이메일 형식을 입력해주세요.")
         private String email;
