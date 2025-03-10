@@ -22,7 +22,8 @@ public class BookConverter {
         String recentBookCover = null;
         if (category.getBooks() != null && !category.getBooks().isEmpty()) {
             Optional<Book> latestBook = category.getBooks().stream()
-                    .max(Comparator.comparing(Book::getRegisterAt));
+                    .max(Comparator.comparing(Book::getRegisterAt)
+                            .thenComparing(Book::getBookId));
             if (latestBook.isPresent()) {
                 recentBookCover = latestBook.get().getCoverImageUrl();
             }
@@ -79,11 +80,9 @@ public class BookConverter {
 
     // BookCategoryListDTO 변환
     public static BookResponseDTO.BookCategoryListDTO toBookCategoryListDTO(Book book) {
-        String bookImage = book.getBookImage() != null ? book.getBookImage().getImageUrl() : null;
-
         return BookResponseDTO.BookCategoryListDTO.builder()
                 .bookId(book.getBookId())
-                .bookImage(bookImage)
+                .bookImage(book.getCoverImageUrl())
                 .title(book.getTitle())
                 .author(book.getAuthor())
                 .build();
