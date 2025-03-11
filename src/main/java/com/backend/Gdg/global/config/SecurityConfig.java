@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         authorize -> authorize
                                 // Member 관련 접근
-                                .requestMatchers("/member/register", "/member/login/kakao", "/member/login/naver", "/member/login/email","/member/refresh").permitAll()
+                                .requestMatchers("/member/**").permitAll()
                                 .requestMatchers("/book/**").permitAll()
                                 .requestMatchers("/category/**").permitAll()
                                 .requestMatchers("/barcode/**").permitAll()
