@@ -33,13 +33,12 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
                         authorize -> authorize
-                                // Member 관련 접근
                                 .requestMatchers("/member/**").permitAll()
                                 .requestMatchers("/book/**").permitAll()
                                 .requestMatchers("/category/**").permitAll()
                                 .requestMatchers("/barcode/**").permitAll()
                                 .requestMatchers("/payment/**").permitAll()
-                                // 기타 관련 접근
+                                .requestMatchers("/paragraph/**").permitAll()
                                 .requestMatchers("/example/**").permitAll()
                                 .requestMatchers("/", "/api-docs/**", "/api-docs/swagger-config/*", "/swagger-ui/*", "/swagger-ui/**", "/v3/api-docs/**", "/image/upload", "/image/delete").permitAll()
                                 .anyRequest().authenticated()
