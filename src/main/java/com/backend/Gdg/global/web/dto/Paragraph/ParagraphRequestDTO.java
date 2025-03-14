@@ -1,7 +1,7 @@
 package com.backend.Gdg.global.web.dto.Paragraph;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -21,5 +21,14 @@ public class ParagraphRequestDTO {
         private String imageURL;
         // 사용자 지정 색상 코드가 int 타입으로 전달됨
         private int color;
+    }
+
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ParagraphImageRequestDTO {
+        private MultipartFile image;
     }
 }

@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -28,6 +27,8 @@ public class BookServiceImpl implements BookService {
     private final AmazonS3Manager s3Manager;
     private final UuidRepository uuidRepository;
     private final MemberRepository memberRepository;
+    private final ParagraphImageRepository paragraphImageRepository;
+
 
     @Override
     public BookResponseDTO.MainBookListResponseDTO getMainBook(Long memberId) {
@@ -94,22 +95,26 @@ public class BookServiceImpl implements BookService {
         return BookConverter.toBookByCategoryResponseDTO(category);
     }
 
+
     @Override
     public BookDetailResponseDTO getBookDetail(Long bookId) {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 책이 존재하지 않습니다."));
 
-        String coverImageUrl = book.getBookImage() != null ? book.getBookImage().getImageUrl() : null;
-
-        // Book 엔티티의 paragraph 목록을 DTO로 변환
+        // `ParagraphImageRepository`에서 `Book`을 직접 찾는 것이 아니라, `Paragraph`를 통해 접근
         var paragraphs = book.getParagraphs().stream()
-                .map(p -> BookDetailResponseDTO.ParagraphDTO.builder()
-                        .paragraph_id(p.getParagraphId())
-                        .content(p.getParagraph())
-                        .ImageUrl(p.getImageUrl())
-                        .color(p.getUserColor())
-                        .create_at(p.getCreateAt())
-                        .build())
+                .map(p -> {
+                    // `Optional<ParagraphImage>`이므로 `.orElse(null)`을 사용하여 처리
+                    Optional<ParagraphImage> paragraphImageOpt = paragraphImageRepository.findByParagraph_ParagraphId(p.getParagraphId());
+                    String imageUrl = paragraphImageOpt.map(ParagraphImage::getImageUrl).orElse(null);
+
+                    return BookDetailResponseDTO.ParagraphDTO.builder()
+                            .paragraph_id(p.getParagraphId())
+                            .content(p.getContent())
+                            .color(p.getUserColor())
+                            .ImageUrl(imageUrl) // ✅ 수정된 부분
+                            .build();
+                })
                 .collect(Collectors.toList());
 
         return BookDetailResponseDTO.builder()

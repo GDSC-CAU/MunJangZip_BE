@@ -22,6 +22,5 @@ public class BookDetailResponseDTO {
         private String content;
         private String ImageUrl; // (예: 필사 이미지 URL, 필요 시 설정)
         private int color;
-        private String create_at; // yyyy-mm-dd 형식
     }
 }

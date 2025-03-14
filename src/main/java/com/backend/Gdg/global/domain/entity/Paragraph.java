@@ -2,6 +2,11 @@ package com.backend.Gdg.global.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -9,6 +14,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class Paragraph {
 
     @Id
@@ -28,16 +34,17 @@ public class Paragraph {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @Column(length = 150)
-    private String paragraph;
+    @Column(length = 255)
+    private String content;
 
     @Column(length = 255)
     private String imageUrl;
 
-    private Boolean isLiked;
+    @OneToOne(mappedBy = "paragraph", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ParagraphImage paragraphImage;
 
-    @Column(nullable = false)
-    private String createAt;
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private Boolean isLiked = false;
 
     private int userColor;
 }

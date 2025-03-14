@@ -48,6 +48,6 @@ public class Book extends BaseEntity {
     @OneToOne(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
     private BookImage bookImage;
 
-    @Column
-    private String CoverImageUrl;
+    @Column(length = 255)
+    private String coverImageUrl;
 }

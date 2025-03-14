@@ -1,20 +1,22 @@
 package com.backend.Gdg.global.service.ParagraphService;
 
-import com.backend.Gdg.global.domain.entity.Book;
-import com.backend.Gdg.global.domain.entity.Member;
-import com.backend.Gdg.global.domain.entity.Paragraph;
-import com.backend.Gdg.global.repository.BookRepository;
-import com.backend.Gdg.global.repository.MemberRepository;
-import com.backend.Gdg.global.repository.ParagraphRepository;
+import com.backend.Gdg.global.aws.s3.AmazonS3Manager;
+import com.backend.Gdg.global.domain.entity.*;
+import com.backend.Gdg.global.repository.*;
 import com.backend.Gdg.global.web.dto.Paragraph.ParagraphRequestDTO;
 import com.backend.Gdg.global.web.dto.Paragraph.ParagraphResponseDTO;
 import com.backend.Gdg.global.web.dto.Paragraph.ParagraphUpdateRequestDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,16 +37,14 @@ public class ParagraphServiceImpl implements ParagraphService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 멤버가 존재하지 않습니다."));
 
         // 현재 날짜 (yyyy-MM-dd)
-        String currentDate = LocalDate.now().toString();
+        LocalDateTime currentDate = LocalDateTime.now();
 
         Paragraph paragraph = Paragraph.builder()
                 .book(book)
                 .category(book.getCategory()) // 책과 동일한 카테고리 사용
                 .member(member)
-                .paragraph(request.getParagraph().getContent())
-                .imageUrl(request.getParagraph().getImageURL())
+                .content(request.getParagraph().getContent())
                 .userColor(request.getParagraph().getColor())
-                .createAt(currentDate)
                 .isLiked(false)
                 .build();
         paragraphRepository.save(paragraph);
@@ -55,10 +55,9 @@ public class ParagraphServiceImpl implements ParagraphService {
                 .stream()
                 .map(p -> ParagraphResponseDTO.ParagraphDetail.builder()
                         .paragraph_id(p.getParagraphId())
-                        .content(p.getParagraph())
+                        .content(p.getContent())
                         .imageUrl(p.getImageUrl())
                         .color(p.getUserColor())
-                        .create_at(p.getCreateAt())
                         .build())
                 .collect(Collectors.toList());
 
@@ -78,7 +77,7 @@ public class ParagraphServiceImpl implements ParagraphService {
 
         // 요청 바디의 값으로 필드 업데이트 (텍스트나 이미지 중 하나가 null일 수 있음)
         if (request.getParagraph().getContent() != null) {
-            paragraph.setParagraph(request.getParagraph().getContent());
+            paragraph.setContent(request.getParagraph().getContent());
         }
         if (request.getParagraph().getImageURL() != null) {
             paragraph.setImageUrl(request.getParagraph().getImageURL());
@@ -93,10 +92,9 @@ public class ParagraphServiceImpl implements ParagraphService {
                 .stream()
                 .map(p -> ParagraphResponseDTO.ParagraphDetail.builder()
                         .paragraph_id(p.getParagraphId())
-                        .content(p.getParagraph())
+                        .content(p.getContent())
                         .imageUrl(p.getImageUrl())
                         .color(p.getUserColor())
-                        .create_at(p.getCreateAt())
                         .build())
                 .collect(Collectors.toList());
 
@@ -126,15 +124,81 @@ public class ParagraphServiceImpl implements ParagraphService {
                 .stream()
                 .map(p -> ParagraphResponseDTO.ParagraphDetail.builder()
                         .paragraph_id(p.getParagraphId())
-                        .content(p.getParagraph())
+                        .content(p.getContent())
                         .imageUrl(p.getImageUrl())
                         .color(p.getUserColor())
-                        .create_at(p.getCreateAt())
                         .build())
                 .collect(Collectors.toList());
 
         return ParagraphResponseDTO.builder()
                 .paragraph(paragraphDetails)
                 .build();
+    }
+
+    private final UuidRepository uuidRepository;
+    private final AmazonS3Manager s3Manager;
+    private final ParagraphImageRepository paragraphImageRepository;
+
+//    @Override
+//    public void uploadParagraphImage(Long paragraphId, ParagraphRequestDTO.ParagraphImageRequestDTO image) {
+//        Paragraph paragraph = paragraphRepository.findById(paragraphId)
+//                .orElseThrow(() -> new IllegalArgumentException("해당 필사가 존재하지 않습니다."));
+//
+//        String uuid = UUID.randomUUID().toString();
+//        Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
+//        String imageUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), image.getImage());
+//
+//        // 기존 이미지가 존재하면 삭제 후 새로 저장
+//        ParagraphImage existingImage = paragraphImageRepository.findByParagraph_ParagraphId(paragraphId);
+//        if (existingImage != null) {
+//            paragraphImageRepository.delete(existingImage);
+//        }
+//
+//        // 새로운 ParagraphImage 저장
+//        ParagraphImage paragraphImage = ParagraphImage.builder()
+//                .paragraph(paragraph)
+//                .imageUrl(imageUrl)
+//                .build();
+//
+//        paragraphImageRepository.save(paragraphImage);
+//    }
+
+    @Override
+    public void uploadParagraphImage(Long bookId, Long memberId, MultipartFile image, int color) {
+        // 책 검증
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 책이 존재하지 않습니다."));
+
+        // 회원 검증
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
+
+        // 새로운 필사(Paragraph) 생성
+        Paragraph paragraph = Paragraph.builder()
+                .book(book)
+                .category(book.getCategory())
+                .member(member)
+                .content(null)  // ✅ 이미지 기반 필사이므로 텍스트 없음
+                .userColor(color)
+                .isLiked(false)
+                .build();
+        paragraphRepository.save(paragraph);
+
+        // 이미지 업로드 및 URL 획득
+        String uuid = UUID.randomUUID().toString();
+        Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
+        String imageUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), image);
+
+        // 기존 이미지가 존재하면 삭제 후 새로 저장
+        // 문단 ID 기준으로 개별 이미지 저장
+        Optional<ParagraphImage> existingImage = paragraphImageRepository.findByParagraph_ParagraphId(paragraph.getParagraphId());
+        existingImage.ifPresent(paragraphImageRepository::delete);
+
+        // 새로운 ParagraphImage 저장
+        ParagraphImage paragraphImage = ParagraphImage.builder()
+                .paragraph(paragraph)
+                .imageUrl(imageUrl)
+                .build();
+        paragraphImageRepository.save(paragraphImage);
     }
 }

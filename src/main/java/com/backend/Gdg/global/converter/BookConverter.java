@@ -58,7 +58,7 @@ public class BookConverter {
                 .author(request.getAuthor())
                 .ISBN(request.getISBN())
                 .member(member)
-                .CoverImageUrl(request.getCoverImageUrl())
+                .coverImageUrl(request.getCoverImageUrl())
                 .category(category)
                 .registerAt(LocalDate.now())
                 .build();

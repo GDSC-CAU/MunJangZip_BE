@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Parameter;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -76,4 +77,23 @@ public class ParagraphController {
             return ApiResponse.onFailure("500", "서버 내부 오류가 발생했습니다.", null);
         }
     }
+
+//    @PostMapping(path = "/{book_id}/image", consumes = "multipart/form-data")
+//    @Operation(summary = "필사 이미지 등록 API", description = "필사 이미지를 등록하는 API입니다.")
+//    public ApiResponse<?> uploadParagraphImage(
+//            @ModelAttribute ParagraphRequestDTO.ParagraphImageRequestDTO request,
+//            @PathVariable("book_id") Long bookId){
+//        paragraphService.uploadParagraphImage(bookId, request);
+//        return ApiResponse.onSuccess(SuccessStatus.BOOK_OK, "필사 이미지 업로드 완료");
+//    }
+@PostMapping(path = "/{book_id}/image", consumes = "multipart/form-data")
+@Operation(summary = "필사 이미지 등록 API", description = "필사 이미지를 등록하는 API입니다.")
+public ApiResponse<?> uploadParagraphImage(
+        @PathVariable("book_id") Long bookId,
+        @RequestParam MultipartFile image,
+        @RequestParam int color,
+        @Parameter(hidden = true) @AuthUser Member member) {
+    paragraphService.uploadParagraphImage(bookId, member.getMemberId(), image, color);
+    return ApiResponse.onSuccess(SuccessStatus.BOOK_OK, "필사 이미지 업로드 완료");
+}
 }

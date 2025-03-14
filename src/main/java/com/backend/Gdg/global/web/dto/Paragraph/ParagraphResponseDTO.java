@@ -2,6 +2,8 @@ package com.backend.Gdg.global.web.dto.Paragraph;
 
 import lombok.Builder;
 import lombok.Getter;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -17,6 +19,6 @@ public class ParagraphResponseDTO {
         private String imageUrl;
         private int color;
         // yyyy-MM-dd 형식의 생성일자
-        private String create_at;
+        private LocalDateTime create_at;
     }
 }
