@@ -1,5 +1,6 @@
 package com.backend.Gdg.global.domain.entity;
 
+import com.backend.Gdg.global.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class Paragraph {
+public class Paragraph extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

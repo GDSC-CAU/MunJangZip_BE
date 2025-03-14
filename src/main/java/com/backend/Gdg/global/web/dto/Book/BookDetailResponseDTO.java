@@ -3,6 +3,7 @@ package com.backend.Gdg.global.web.dto.Book;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -22,5 +23,6 @@ public class BookDetailResponseDTO {
         private String content;
         private String ImageUrl; // (예: 필사 이미지 URL, 필요 시 설정)
         private int color;
+        private LocalDateTime createdAt;
     }
 }
