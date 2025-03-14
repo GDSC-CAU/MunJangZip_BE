@@ -112,6 +112,7 @@ public class BookServiceImpl implements BookService {
                             .paragraph_id(p.getParagraphId())
                             .content(p.getContent())
                             .color(p.getUserColor())
+                            .createdAt(p.getCreatedAt())
                             .ImageUrl(imageUrl) // ✅ 수정된 부분
                             .build();
                 })
