@@ -106,7 +106,7 @@ public class BookServiceImpl implements BookService {
                 .map(p -> BookDetailResponseDTO.ParagraphDTO.builder()
                         .paragraph_id(p.getParagraphId())
                         .content(p.getParagraph())
-                        .ImageUrl(null) // 필요시 필사 이미지 URL을 설정
+                        .ImageUrl(p.getImageUrl())
                         .color(p.getUserColor())
                         .create_at(p.getCreateAt())
                         .build())
@@ -115,7 +115,7 @@ public class BookServiceImpl implements BookService {
         return BookDetailResponseDTO.builder()
                 .title(book.getTitle())
                 .author(book.getAuthor())
-                .coverImageUrl(coverImageUrl)
+                .coverImageUrl(book.getCoverImageUrl())
                 .ISBN(book.getISBN())
                 .category(book.getCategory().getCategoryName())
                 .paragraph(paragraphs)
