@@ -54,7 +54,7 @@ jobs:
         with:
           host: ${{ secrets.AZURE_VM_HOST }}
           username: ${{ secrets.AZURE_VM_USER }}
-          key_path: private_key.pem
+          key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
             echo "✅ Stopping and removing old container..."
