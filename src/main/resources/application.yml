@@ -7,7 +7,7 @@ spring:
     # password: ${LOCAL_DB_PW}
 
     # Azure Database for MySQL (Flexible Server) 배포용
-    url: jdbc:mysql://munjangzip-db.mysql.database.azure.com:3306/gdg_db?useSSL=true&requireSSL=true
+    url: jdbc:mysql://munjangzip-db.mysql.database.azure.com:3306/munjangzip_db?sslMode=REQUIRED
     username: ${AZURE_DB_USERNAME}      # ex. root@munjangzip-db
     password: ${AZURE_DB_PASSWORD}
 
@@ -37,8 +37,7 @@ azure:
     endpoint:     https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net
     container-name: munjangzip
     path:
-      file: books
-      book: book
+      file: ""
 jwt:
   secret: ${JWT_SECRET_KEY}
   access-token-validity: ${JWT_ACCESS_TOKEN_TIME}
