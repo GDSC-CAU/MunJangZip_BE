@@ -15,7 +15,7 @@ public interface BookService {
     BookResponseDTO.BookRegisterResponseDTO registerBook(Long categoryId, BookRequestDTO.BookRegisterResquestDTO request, Long memberId);
 
     //책 표지 업로드 사비스
-    void uploadBookImage(Long bookId, BookRequestDTO.BookImageRequestDTO image);
+//    void uploadBookImage(Long bookId, BookRequestDTO.BookImageRequestDTO image);
 
     //카테고리별 책 조회 서비스
     BookResponseDTO.BookByCategoryResponseDTO getBooksByCategory(Long categoryId, Long memberId);

@@ -1,18 +1,16 @@
 package com.backend.Gdg.global.service.ParagraphService;
 
-import com.backend.Gdg.global.aws.s3.AmazonS3Manager;
+import com.backend.Gdg.global.azure.blob.AzureBlobManager;
 import com.backend.Gdg.global.domain.entity.*;
 import com.backend.Gdg.global.repository.*;
 import com.backend.Gdg.global.web.dto.Paragraph.ParagraphRequestDTO;
 import com.backend.Gdg.global.web.dto.Paragraph.ParagraphResponseDTO;
 import com.backend.Gdg.global.web.dto.Paragraph.ParagraphUpdateRequestDTO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +25,8 @@ public class ParagraphServiceImpl implements ParagraphService {
     private final BookRepository bookRepository;
     private final MemberRepository memberRepository;
     private final ParagraphRepository paragraphRepository;
+    private final AzureBlobManager blobManager;
+    private final ParagraphImageRepository paragraphImageRepository;
 
     @Override
     public ParagraphResponseDTO addParagraph(ParagraphRequestDTO request, Long memberId) {
@@ -136,32 +136,6 @@ public class ParagraphServiceImpl implements ParagraphService {
     }
 
     private final UuidRepository uuidRepository;
-    private final AmazonS3Manager s3Manager;
-    private final ParagraphImageRepository paragraphImageRepository;
-
-//    @Override
-//    public void uploadParagraphImage(Long paragraphId, ParagraphRequestDTO.ParagraphImageRequestDTO image) {
-//        Paragraph paragraph = paragraphRepository.findById(paragraphId)
-//                .orElseThrow(() -> new IllegalArgumentException("해당 필사가 존재하지 않습니다."));
-//
-//        String uuid = UUID.randomUUID().toString();
-//        Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
-//        String imageUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), image.getImage());
-//
-//        // 기존 이미지가 존재하면 삭제 후 새로 저장
-//        ParagraphImage existingImage = paragraphImageRepository.findByParagraph_ParagraphId(paragraphId);
-//        if (existingImage != null) {
-//            paragraphImageRepository.delete(existingImage);
-//        }
-//
-//        // 새로운 ParagraphImage 저장
-//        ParagraphImage paragraphImage = ParagraphImage.builder()
-//                .paragraph(paragraph)
-//                .imageUrl(imageUrl)
-//                .build();
-//
-//        paragraphImageRepository.save(paragraphImage);
-//    }
 
     @Override
     public void uploadParagraphImage(Long bookId, Long memberId, MultipartFile image, int color) {
@@ -178,7 +152,7 @@ public class ParagraphServiceImpl implements ParagraphService {
                 .book(book)
                 .category(book.getCategory())
                 .member(member)
-                .content(null)  // ✅ 이미지 기반 필사이므로 텍스트 없음
+                .content(null)
                 .userColor(color)
                 .isLiked(false)
                 .build();
@@ -186,8 +160,8 @@ public class ParagraphServiceImpl implements ParagraphService {
 
         // 이미지 업로드 및 URL 획득
         String uuid = UUID.randomUUID().toString();
-        Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
-        String imageUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), image);
+        String blobName = blobManager.generateBlobName("paragraphs", uuid);
+        String imageUrl = blobManager.uploadFile(blobName, image);
 
         // 기존 이미지가 존재하면 삭제 후 새로 저장
         // 문단 ID 기준으로 개별 이미지 저장

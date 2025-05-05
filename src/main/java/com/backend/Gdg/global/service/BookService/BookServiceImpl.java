@@ -1,6 +1,6 @@
 package com.backend.Gdg.global.service.BookService;
 
-import com.backend.Gdg.global.aws.s3.AmazonS3Manager;
+import com.backend.Gdg.global.azure.blob.AzureBlobManager;
 import com.backend.Gdg.global.converter.BookConverter;
 import com.backend.Gdg.global.domain.entity.*;
 import com.backend.Gdg.global.repository.*;
@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,10 +23,10 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final CategoryRepository categoryRepository;
     private final BookImageRepository bookImageRepository;
-    private final AmazonS3Manager s3Manager;
     private final UuidRepository uuidRepository;
     private final MemberRepository memberRepository;
     private final ParagraphImageRepository paragraphImageRepository;
+    private final AzureBlobManager blobManager;
 
 
     @Override
@@ -58,29 +57,6 @@ public class BookServiceImpl implements BookService {
 
 
         return BookConverter.toBookRegisterResponseDTO(savedBook);
-    }
-
-    @Override
-    public void uploadBookImage(Long bookId, BookRequestDTO.BookImageRequestDTO image){
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 책이 존재하지 않습니다."));
-
-        String uuid = UUID.randomUUID().toString();
-        Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
-        String imageUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), image.getImage());
-
-        // 기존 이미지가 있으면 삭제 후 새로 저장
-        BookImage existingImage = bookImageRepository.findByBook_bookId(bookId);
-        if (existingImage != null) {
-            bookImageRepository.delete(existingImage);
-        }
-
-        BookImage bookImage = BookImage.builder()
-                .book(book)
-                .imageUrl(imageUrl)
-                .build();
-
-        bookImageRepository.save(bookImage);
     }
 
     @Override
