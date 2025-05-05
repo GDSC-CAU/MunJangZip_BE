@@ -124,6 +124,7 @@ $RECYCLE.BIN/
 
 # 환경 변수 및 임시 파일
 .env
+*.yml
 tmp/
 temp/
 

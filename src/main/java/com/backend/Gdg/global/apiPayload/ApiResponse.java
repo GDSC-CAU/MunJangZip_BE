@@ -24,9 +24,9 @@ public class ApiResponse<T> {
         return new ApiResponse<>(true, status.getCode(), status.getMessage(), result);
     }
 
-    public static <T> ApiResponse<T> of(BaseCode code, T result){
-        return new ApiResponse<>(true, code.getReasonHttpStatus().getCode() , code.getReasonHttpStatus().getMessage(), result);
-    }
+//    public static <T> ApiResponse<T> of(BaseCode code, T result){
+//        return new ApiResponse<>(true, code.getReasonHttpStatus().getCode() , code.getReasonHttpStatus().getMessage(), result);
+//    }
 
     // 실패한 경우 응답 생성
     public static <T> ApiResponse<T> onFailure(String code, String message, T data){
