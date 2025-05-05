@@ -44,12 +44,17 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-docker-image
     steps:
+      - name: Write SSH private key to file
+        run: |
+          echo "${{ secrets.SSH_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
+
       - name: SSH to Azure VM and Deploy
         uses: appleboy/ssh-action@v0.1.3
         with:
-          host: ${{ secrets.AZURE_VM_HOST }}      # Azure VM 퍼블릭 IP or DNS
-          username: ${{ secrets.AZURE_VM_USER }}  # 보통 'azureuser' 또는 'ubuntu'
-          key: ${{ secrets.SSH_KEY }}             # SSH private key
+          host: ${{ secrets.AZURE_VM_HOST }}
+          username: ${{ secrets.AZURE_VM_USER }}
+          key_path: private_key.pem
           port: 22
           script: |
             echo "✅ Stopping and removing old container..."
